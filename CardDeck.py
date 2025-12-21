@@ -2,10 +2,9 @@ import random
 
 from CardSuit import CardSuit
 from CardType import CardType
-from CardClass import Card
+from Card import Card
 
-
-class Deck:
+class CardDeck:
     def __init__(
         self,
         deck_count: int,
