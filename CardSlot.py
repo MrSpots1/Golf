@@ -25,4 +25,7 @@ class CardSlot:
         self.isFaceDown = False
 
     def display(self) -> str:
-        print("TODO")
+        if self.isFaceDown:
+            return "?"
+        else:
+            return self.card.display()

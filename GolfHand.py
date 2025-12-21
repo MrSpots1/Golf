@@ -31,8 +31,11 @@ class GolfHand:
         self.getSlot(row, column).placeRevealedCard(card)
 
     def display(self):
+        display_string = ""
         for r in range(self.rows):
             for c in range(self.columns):
-                self.getSlot(r, c).display()
+                display_string += self.slots[r][c].display() + " "
+            display_string += "\n"
+        print(display_string)
 
     
