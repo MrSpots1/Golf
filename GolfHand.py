@@ -4,14 +4,14 @@ from CardType import CardType
 from CardClass import Card
 
 class GolfHand:
-    def __init__(self, rows: int = 2, columns: int = 3):
+    def __init__(self):
         self.slots = []
-        self.rows = rows
-        self.columns = columns
+        self.rows = 2
+        self.columns = 3
 
-        for r in range(rows):
+        for r in range(self.rows):
             self.slots.append([])
-            for c in range(columns):
+            for c in range(self.columns):
                 self.slots[r].append(CardSlot())
 
     def getSlot(self, row: int, column: int) -> CardSlot:
@@ -38,4 +38,35 @@ class GolfHand:
             display_string += "\n"
         print(display_string)
 
-    
+    def calculate_current_hand_value(self):
+        score_map: {
+            CardType.Ace: 1,
+            CardType.Two: -2,
+            CardType.Jack: 10,
+            CardType.Queen: 10,
+            CardType.King: 0,
+        }
+        def get_score(cardtype: CardType):
+            return score_map.get(cardtype, cardtype.value)
+        score = 0
+        for c in range(self.columns):
+            if not self.slots[c][0].isFaceDown and not self.slots[c][1].isFaceDown:
+                if self.slots[c][0].type == self.slots[c][1] and self.slots[c][0].type != CardType.Two:
+                    continue
+                else:
+                    score += get_score(self.slots[c][0].type)
+                    score += get_score(self.slots[c][1].type)
+            elif self.slots[c][0].isFaceDown and not self.slots[c][1].isFaceDown:
+                score += get_score(self.slots[c][1].type)
+            elif not self.slots[c][0].isFaceDown and self.slots[c][1].isFaceDown:
+                score += get_score(self.slots[c][0].type)
+            else:
+                continue
+        return score
+
+    def is_done(self):
+        for r in range(self.rows):
+            for c in range(self.columns):
+                if self.slots[r][c].isFaceDown:
+                    return False
+        return True
