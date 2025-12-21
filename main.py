@@ -1,5 +1,8 @@
-from CardSuit import CardSuit
-from CardType import CardType
+from GameMenu import GameMenu
 
-print("welcome to the wonderful game of Golf!")
+def main():
+	menu = GameMenu()
+	menu.run()
+
+main()
 
