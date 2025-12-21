@@ -7,5 +7,22 @@ class CardSlot:
         self
     ):
         self.card = None
-        self.hidden = True
+        self.isFaceDown = True
 
+    def placeHiddenCard(self, card: Card):
+        if (self.card is not None):
+            raise ValueError("CardSlot already has a card.")
+        self.card = card
+        self.isFaceDown = True
+
+    def revealCard(self):
+        if(self.isFaceDown == False):
+            raise ValueError("Card is already revealed.")
+        self.isFaceDown = False
+    
+    def placeRevealedCard(self, card: Card):
+        self.card = card
+        self.isFaceDown = False
+
+    def display(self) -> str:
+        print("TODO")
