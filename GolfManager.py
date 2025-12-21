@@ -13,7 +13,5 @@ class GolfManager:
         self.deck.shuffle()
         self.player_one_hand = []
         self.player_two_hand = []
-        for i in range(6):
-            self.player_one_hand.append(self.deck.draw_card())
-            self.player_two_hand.append(self.deck.draw_card())
+
 
