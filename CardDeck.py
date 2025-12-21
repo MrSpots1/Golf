@@ -34,12 +34,19 @@ class Deck:
     def discard(self, card):
         self.discards.append(card)
 
+    def topDiscardCard(self):
+        if self.discards.__len__() == 0:
+            raise Exception("There are no cards on the discard pile")
+        return self.discards[-1]
+
     def cards_left(self):
         return self.cards.__len__()
 
     def discards_to_cards(self):
         if self.cards_left() == 0:
-            return []
+            self.cards = self.discards
+            self.discards = []
+            self.shuffle()
         else:
             raise Exception("There are still cards left in the draw pile")
 
