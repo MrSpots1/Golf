@@ -1,5 +1,5 @@
-from CardClass import Card
-import CardDeck
+from Card import Card
+from CardDeck import CardDeck
 
 class GameState:
     def __init__(self, cardDeck: CardDeck, players: list, playerIndex: int):

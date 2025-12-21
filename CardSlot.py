@@ -1,6 +1,6 @@
 from CardSuit import CardSuit
 from CardType import CardType
-from CardClass import Card
+from Card import Card
 
 class CardSlot:
     def __init__(

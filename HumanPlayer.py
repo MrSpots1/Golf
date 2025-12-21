@@ -1,15 +1,14 @@
 from GameState import GameState
-import Player
+from Player import Player
 from PlayerType import PlayerType
-import TurnResult
-
+from TurnResult import TurnResult
 
 class HumanPlayer(Player):
-    def __init__(self, name: str):
-        super().__init__(name, PlayerType.Human)
+    def __init__(self, name: str, playerIndex: int):
+        super().__init__(name, PlayerType.Human, playerIndex)
 
     def playTurn(self, gameState: GameState) -> TurnResult:
-        pass  # No implementation here — must be overridden
+        return TurnResult()  # Implementation for human player turn
 
     def watchTurn(self, originalState: GameState, playerIndex: int, turnResult: TurnResult) -> None:
-        return # No implementation for default implementation
+        pass # No implementation for default implementation

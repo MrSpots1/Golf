@@ -1,8 +1,7 @@
-from CardDeck import CardDeck
 from GameState import GameState
 from GolfHand import GolfHand
 from PlayerType import PlayerType 
-from CardClass import Card
+from Card import Card
 
 from TurnResult import TurnResult
 

@@ -1,7 +1,7 @@
 from CardSlot import CardSlot
 from CardSuit import CardSuit
 from CardType import CardType
-from CardClass import Card
+from Card import Card
 
 class GolfHand:
     def __init__(self):
