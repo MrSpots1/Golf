@@ -26,6 +26,6 @@ class CardSlot:
 
     def display(self) -> str:
         if self.isFaceDown:
-            return "?"
+            return "??"
         else:
             return self.card.display()
