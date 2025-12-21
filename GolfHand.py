@@ -38,6 +38,11 @@ class GolfHand:
             display_string += "\n"
         print(display_string)
 
+    def revealRemainingCards(self):
+        for r in range(self.rows):
+            for c in range(self.columns):
+                self.slots[r][c].revealCard()
+
     def calculate_current_hand_value(self):
         score = 0
         for c in range(self.columns):
