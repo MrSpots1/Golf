@@ -25,4 +25,17 @@ class CardSlot:
         self.isFaceDown = False
 
     def display(self) -> str:
-        print("TODO")
+        if self.isFaceDown:
+            return "??"
+        else:
+            return self.card.display()
+    def get_card_value(self) -> int:
+        score_map = {
+            CardType.Ace: 1,
+            CardType.Two: -2,
+            CardType.Jack: 10,
+            CardType.Queen: 10,
+            CardType.King: 0,
+        }
+
+        return score_map.get(self.card.type, self.card.type.value)
