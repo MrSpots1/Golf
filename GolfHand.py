@@ -39,27 +39,18 @@ class GolfHand:
         print(display_string)
 
     def calculate_current_hand_value(self):
-        score_map: {
-            CardType.Ace: 1,
-            CardType.Two: -2,
-            CardType.Jack: 10,
-            CardType.Queen: 10,
-            CardType.King: 0,
-        }
-        def get_score(cardtype: CardType):
-            return score_map.get(cardtype, cardtype.value)
         score = 0
         for c in range(self.columns):
             if not self.slots[c][0].isFaceDown and not self.slots[c][1].isFaceDown:
                 if self.slots[c][0].type == self.slots[c][1] and self.slots[c][0].type != CardType.Two:
                     continue
                 else:
-                    score += get_score(self.slots[c][0].type)
-                    score += get_score(self.slots[c][1].type)
+                    score += self.slots[c][0].get_card_value()
+                    score += self.slots[c][1].get_card_value()
             elif self.slots[c][0].isFaceDown and not self.slots[c][1].isFaceDown:
-                score += get_score(self.slots[c][1].type)
+                score += self.slots[c][1].get_card_value()
             elif not self.slots[c][0].isFaceDown and self.slots[c][1].isFaceDown:
-                score += get_score(self.slots[c][0].type)
+                score += self.slots[c][0].get_card_value()
             else:
                 continue
         return score
