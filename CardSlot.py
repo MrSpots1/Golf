@@ -4,11 +4,15 @@ from Card import Card
 
 class CardSlot:
     def __init__(
-        self
+        self,
+        row: int,
+        column: int
     ):
         self.card = None
         self.isFaceDown = True
-
+        self.row = row
+        self.column = column
+        
     def placeHiddenCard(self, card: Card):
         if (self.card is not None):
             raise ValueError("CardSlot already has a card.")
@@ -29,6 +33,7 @@ class CardSlot:
             return "??"
         else:
             return self.card.display()
+        
     def get_card_value(self) -> int:
         score_map = {
             CardType.Ace: 1,

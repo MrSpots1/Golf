@@ -1,3 +1,4 @@
+from AIPlayer import AIPlayer
 from GolfManager import GolfManager
 from HumanPlayer import HumanPlayer
 
@@ -29,7 +30,10 @@ class GameMenu:
                     print("Invalid selection. Please try again.\n")
 
     def on_ai_start(self):
-        print("Starting a new game against AI... (not implemented yet)")
+        taylan = HumanPlayer("Taylan", 0)
+        ai = AIPlayer(1)
+        manager = GolfManager([taylan, ai])
+        manager.run()
 
     def on_player_start(self):
         players = []

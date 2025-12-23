@@ -37,6 +37,12 @@ class CardDeck:
         if self.discards.__len__() == 0:
             raise Exception("There are no cards on the discard pile")
         return self.discards[-1]
+    
+    def takeDiscardCard(self):
+        if self.discards.__len__() == 0:
+            raise Exception("There are no cards on the discard pile")
+        topDiscard = self.discards.pop()
+        return topDiscard
 
     def cards_left(self):
         return self.cards.__len__()
