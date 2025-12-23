@@ -30,12 +30,14 @@ class GolfHand:
     def placeRevealedCard(self, row: int, column: int, card: Card):
         self.getSlot(row, column).placeRevealedCard(card)
 
-    def display(self):
+    def display(self, ending_new_line = False):
         display_string = ""
         for r in range(self.rows):
             for c in range(self.columns):
                 display_string += self.slots[r][c].display() + " "
             display_string += "\n"
+        if ending_new_line:
+            display_string = display_string[:-1]
         print(display_string)
 
     def revealRemainingCards(self):
