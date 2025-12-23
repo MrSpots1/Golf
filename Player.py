@@ -12,9 +12,13 @@ class Player:
         self.playerIndex = playerIndex
         self.hand = GolfHand()
 
-    def display(self):
-        print(f"Player: {self.name} [{self.playerType.name}")
+    def display(self, isTurn: bool = False) -> None:
+        turnFlag = "-->>" if isTurn else ""
+        print(f"{turnFlag}Player: {self.name} [{self.playerType.name}]")
         self.hand.display()
+
+    def initialReveal(self) -> None:
+        pass  # No implementation here — must be overridden for the player to reveal two cards
 
     def playTurn(self, gameState: GameState) -> TurnResult:
         pass  # No implementation here — must be overridden

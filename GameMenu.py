@@ -1,3 +1,7 @@
+from GolfManager import GolfManager
+from HumanPlayer import HumanPlayer
+
+
 class GameMenu: 
     def display(self):
         print("\n=== Golf: Main Menu ===")
@@ -28,7 +32,10 @@ class GameMenu:
         print("Starting a new game against AI... (not implemented yet)")
 
     def on_player_start(self):
-        print("Starting a new game against another player... (not implemented yet)")
+        taylan = HumanPlayer("Taylan", 0)
+        jeff = HumanPlayer("Jeff", 1)
+        manager = GolfManager([taylan, jeff])
+        manager.run()
 
     def on_show_rules(self):
         print("\n--- Golf Rules (Simplified) ---")

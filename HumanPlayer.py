@@ -7,6 +7,35 @@ class HumanPlayer(Player):
     def __init__(self, name: str, playerIndex: int):
         super().__init__(name, PlayerType.Human, playerIndex)
 
+    def initialReveal(self) -> None:
+        pos_row = input(f"Player {self.name}, what row you would like to reveal first? (1 or 2): ")
+        while True:
+            if pos_row == "1" or pos_row == "2":
+                break
+            pos_row = input("Invalid option, please try again: ")
+        pos_row = int(pos_row) - 1
+        pos_col = input(f"Player {self.name}, what column you would like to reveal first? (1-3): ")
+        while True:
+            if pos_col == "1" or pos_col == "2" or pos_col == "3":
+                break
+            pos_col = input("Invalid option, please try again: ")
+        pos_col = int(pos_col) - 1
+        self.hand.revealCard(pos_row, pos_col)
+
+        pos_row = input(f"Player {self.name}, what row you would like to reveal second? (1 or 2): ")
+        while True:
+            if pos_row == "1" or pos_row == "2":
+                break
+            pos_row = input("Invalid option, please try again: ")
+        pos_row = int(pos_row) - 1
+        pos_col = input(f"Player {self.name}, what column you would like to reveal second? (1-3): ")
+        while True:
+            if pos_col == "1" or pos_col == "2" or pos_col == "3":
+                break
+            pos_col = input("Invalid option, please try again: ")
+        pos_col = int(pos_col) - 1
+        self.hand.revealCard(pos_row, pos_col)
+
     def playTurn(self, gameState: GameState) -> TurnResult:
         option = input("Do you want to take the top card of the discard pile, or the top card of the draw pile? (1 = discard pile, 2 = draw pile): ")
         tookDiscard = False
