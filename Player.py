@@ -17,6 +17,11 @@ class Player:
         print(f"{turnFlag}Player: {self.name} [{self.playerType.name}]")
         self.hand.display()
 
+    def displayFinal(self, isTurn: bool = False) -> None:
+        turnFlag = "-->>" if isTurn else ""
+        print(f"{turnFlag}Player: {self.name} [{self.playerType.name}]")
+        self.hand.display(True)
+
     def initialReveal(self) -> None:
         pass  # No implementation here — must be overridden for the player to reveal two cards
 
