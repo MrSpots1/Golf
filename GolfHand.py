@@ -41,7 +41,8 @@ class GolfHand:
     def revealRemainingCards(self):
         for r in range(self.rows):
             for c in range(self.columns):
-                self.slots[r][c].revealCard()
+                if(self.slots[r][c].isFaceDown):
+                    self.slots[r][c].revealCard()
 
     def calculate_current_hand_value(self):
         score = 0
