@@ -40,7 +40,7 @@ class HumanPlayer(Player):
         elif option == "2":
             card = gameState.cardDeck.draw_card()
             print(f"You got the card: {card.display()}")
-            answer = input_checker("Do you want to take this card or discard it? (1 = take, 2 = discard)",["1", "2"])
+            answer = input_checker("Do you want to take this card or discard it? (1 = take, 2 = discard): ",["1", "2"])
             if answer == "2":
                 gameState.cardDeck.discard(card)
                 return TurnResult(gameState, False, card, False, -1, -1, card)

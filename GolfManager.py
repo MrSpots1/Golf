@@ -68,16 +68,20 @@ class GolfManager:
             self.currentPlayerIndex = (self.currentPlayerIndex + 1) % len(self.players)
         
         print("The game is over!")
+
         winner = None
         winningScore = 100000
         for player in self.players:
             player.hand.revealRemainingCards()
+
             score = player.hand.calculate_current_hand_value()
             print(f"{player.name} scored {score} points.")
             if score < winningScore:
                 winningScore = score
                 winner = player
-
+        print("The final game state is as follows: ")
+        gameState = GameState(self.deck, self.players, self.currentPlayerIndex)
+        self.displayGameState(gameState)
         print(f"The winner is {winner.name} with a score of {winningScore} points!")
         
 

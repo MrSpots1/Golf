@@ -41,22 +41,22 @@ class GolfHand:
     def revealRemainingCards(self):
         for r in range(self.rows):
             for c in range(self.columns):
-                if(self.slots[r][c].isFaceDown):
+                if self.slots[r][c].isFaceDown:
                     self.slots[r][c].revealCard()
 
     def calculate_current_hand_value(self):
         score = 0
         for c in range(self.columns):
-            if not self.slots[c][0].isFaceDown and not self.slots[c][1].isFaceDown:
-                if self.slots[c][0].type == self.slots[c][1] and self.slots[c][0].type != CardType.Two:
+            if not self.slots[0][c].isFaceDown and not self.slots[1][c].isFaceDown:
+                if self.slots[0][c].card.type == self.slots[1][c].card.type and self.slots[0][c].card.type != CardType.Two:
                     continue
                 else:
-                    score += self.slots[c][0].get_card_value()
-                    score += self.slots[c][1].get_card_value()
-            elif self.slots[c][0].isFaceDown and not self.slots[c][1].isFaceDown:
-                score += self.slots[c][1].get_card_value()
-            elif not self.slots[c][0].isFaceDown and self.slots[c][1].isFaceDown:
-                score += self.slots[c][0].get_card_value()
+                    score += self.slots[0][c].get_card_value()
+                    score += self.slots[1][c].get_card_value()
+            elif self.slots[0][c].isFaceDown and not self.slots[1][c].isFaceDown:
+                score += self.slots[1][c].get_card_value()
+            elif not self.slots[0][c].isFaceDown and self.slots[1][c].isFaceDown:
+                score += self.slots[0][c].get_card_value()
             else:
                 continue
         return score
