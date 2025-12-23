@@ -67,9 +67,9 @@ class GolfManager:
             # move to next player
             self.currentPlayerIndex = (self.currentPlayerIndex + 1) % len(self.players)
         
-        print("The game is over!");
+        print("The game is over!")
         winner = None
-        winningScore = 100000;
+        winningScore = 100000
         for player in self.players:
             player.hand.revealRemainingCards()
             score = player.hand.calculate_current_hand_value()
