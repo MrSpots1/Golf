@@ -36,9 +36,29 @@ class GameMenu:
         manager.run()
 
     def on_player_start(self):
-        taylan = HumanPlayer("Taylan", 0)
-        jeff = HumanPlayer("Jeff", 1)
-        manager = GolfManager([taylan, jeff])
+        players = []
+        while True:
+            player_amount = input("Please input the player count: ")
+            try:
+                player_amount = int(player_amount)
+            except ValueError:
+                print("Invalid input. Please try again.")
+                continue
+            if player_amount < 2:
+                print("Invalid input. Please try again.")
+                continue
+            break
+        player_names = []
+        for i in range(player_amount):
+            while True:
+                name = input(f"Please enter Player {i+1}'s name: ")
+                if name.lower() not in player_names:
+                    player_names.append(name.lower())
+                    break
+                print("Name already in use. Please try again.")
+            players.append(HumanPlayer(name, i))
+
+        manager = GolfManager(players)
         manager.run()
 
     def on_show_rules(self):
