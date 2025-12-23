@@ -35,7 +35,7 @@ class HumanPlayer(Player):
         tookDiscard = False
         card = None
         if option == "1":
-            card = gameState.cardDeck.topDiscardCard()
+            card = gameState.cardDeck.takeDiscardCard()
             tookDiscard = True
         elif option == "2":
             card = gameState.cardDeck.draw_card()

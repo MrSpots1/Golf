@@ -12,7 +12,7 @@ class GolfHand:
         for r in range(self.rows):
             self.slots.append([])
             for c in range(self.columns):
-                self.slots[r].append(CardSlot())
+                self.slots[r].append(CardSlot(r, c))
 
     def getSlot(self, row: int, column: int) -> CardSlot:
         if row < 0 or row >= self.rows:
@@ -60,10 +60,21 @@ class GolfHand:
             else:
                 continue
         return score
-
+    
     def is_done(self):
         for r in range(self.rows):
             for c in range(self.columns):
                 if self.slots[r][c].isFaceDown:
                     return False
         return True
+    
+    def clone(self) -> GolfHand:
+        new_hand = GolfHand()
+        for r in range(self.rows):
+            for c in range(self.columns):
+                slot = self.getSlot(r, c)
+                if slot.isFaceDown:
+                    new_hand.placeHiddenCard(r, c, slot.card)
+                else:
+                    new_hand.placeRevealedCard(r, c, slot.card)
+        return new_hand
