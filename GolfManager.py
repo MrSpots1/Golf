@@ -67,7 +67,7 @@ class GolfManager:
             for i, player in enumerate(self.players):
                 if i != self.currentPlayerIndex:
                     player.watchTurn(gameState, self.currentPlayerIndex, turnResult)
-            if currentPlayer.hand.is_done():
+            if currentPlayer.hand.is_done() and out_player_index == -1:
                 out_player_index = self.currentPlayerIndex
             # move to next player
             self.currentPlayerIndex = (self.currentPlayerIndex + 1) % len(self.players)
