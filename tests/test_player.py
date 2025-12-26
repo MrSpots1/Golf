@@ -9,5 +9,5 @@ from PlayerType import PlayerType
 
 class TestHumanPlayer(unittest.TestCase):
     def test_human_player_type(self):
-        hp = HumanPlayer("Alice", 0)
+        hp = HumanPlayer("Alice")
         self.assertEqual(hp.playerType, PlayerType.Human)

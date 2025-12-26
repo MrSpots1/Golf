@@ -1,4 +1,4 @@
-from CardSlot import CardSlot
+from CardSlot import CardPosition, CardSlot
 from CardSuit import CardSuit
 from CardType import CardType
 from Card import Card
@@ -12,33 +12,34 @@ class GolfHand:
         for r in range(self.rows):
             self.slots.append([])
             for c in range(self.columns):
-                self.slots[r].append(CardSlot(r, c))
-
-    def getSlot(self, row: int, column: int) -> CardSlot:
+                self.slots[r].append(CardSlot(CardPosition(r, c)))
+ 
+    def getSlot(self, position: CardPosition | None = None, row: int = None, column: int = None) -> CardSlot:
+        if position is not None:
+            row = position.row
+            column = position.column
         if row < 0 or row >= self.rows:
             raise IndexError("Row index out of range")
         if column < 0 or column >= self.columns:
             raise IndexError("Column index out of range")
         return self.slots[row][column]
     
-    def placeHiddenCard(self, row: int, column: int, card: Card):
-        self.getSlot(row, column).placeHiddenCard(card)
+    def placeFacedownCard(self, position: CardPosition, card: Card):
+        self.getSlot(position).placeFacedownCard(card)
 
-    def revealCard(self, row: int, column: int):
-        self.getSlot(row, column).revealCard()
+    def revealCard(self, position: CardPosition):
+        self.getSlot(position).revealCard()
     
-    def placeRevealedCard(self, row: int, column: int, card: Card):
-        self.getSlot(row, column).placeRevealedCard(card)
+    def placeRevealedCard(self, position: CardPosition, card: Card):
+        self.getSlot(position).placeRevealedCard(card)
 
-    def display(self, ending_new_line = False):
+    def str(self) -> str:
         display_string = ""
         for r in range(self.rows):
             for c in range(self.columns):
-                display_string += self.slots[r][c].display() + " "
+                display_string += self.slots[r][c].str() + " "
             display_string += "\n"
-        if ending_new_line:
-            display_string = display_string[:-1]
-        print(display_string)
+        return display_string[:-1]
 
     def revealRemainingCards(self):
         for r in range(self.rows):
@@ -74,9 +75,9 @@ class GolfHand:
         new_hand = GolfHand()
         for r in range(self.rows):
             for c in range(self.columns):
-                slot = self.getSlot(r, c)
+                slot = self.getSlot(CardPosition(r, c))
                 if slot.isFaceDown:
-                    new_hand.placeHiddenCard(r, c, slot.card)
+                    new_hand.placeFacedownCard(CardPosition(r, c), slot.card)
                 else:
-                    new_hand.placeRevealedCard(r, c, slot.card)
+                    new_hand.placeRevealedCard(CardPosition(r, c), slot.card)
         return new_hand

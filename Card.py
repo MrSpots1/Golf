@@ -10,7 +10,7 @@ class Card:
         self.suit = card_suit
         self.type = card_type
 
-    def display(self):
+    def str(self) -> str:
         type_map = {
             CardType.Ace: "A",
             CardType.Jack: "J",
