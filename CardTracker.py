@@ -2,12 +2,12 @@ from CardType import CardType
 from Card import Card
 
 class CardTracker:
-    def __init__(self, deckCount: int):
-        self.deckCount = deckCount
+    def __init__(self, numberOfDecks: int):
+        self.numberOfDecks = numberOfDecks
         # Initialize an array of ints, all zeros, one for each value of a card
         self.__counts = [0] * (len(CardType))
-        self.__maxCountPerType = deckCount * 4  # 4 suits per type
-        self.__totalCards = deckCount * 52  # 52 cards per deck
+        self.__maxCountPerType = numberOfDecks * 4  # 4 suits per type
+        self.__totalCards = numberOfDecks * 52  # 52 cards per deck
 
     def observeCard(self, card: Card) -> None:
         self.__counts[card.type.value - 1] += 1
@@ -20,6 +20,10 @@ class CardTracker:
         observedCount = self.__counts[cardType.value - 1]
         return self.__maxCountPerType - observedCount
     
+    def getTotalObservedCards(self) -> int:
+        observedTotal = sum(self.__counts)
+        return observedTotal
+
     def getTotalRemainingCards(self) -> int:
         observedTotal = sum(self.__counts)
         return self.__totalCards - observedTotal

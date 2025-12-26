@@ -7,7 +7,7 @@ class TestImports(unittest.TestCase):
         modules = [
             "CardSuit",
             "CardType",
-            "GameMenu",
+            "Card",
         ]
         for name in modules:
             importlib.import_module(name)
