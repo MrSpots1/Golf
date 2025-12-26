@@ -1,5 +1,6 @@
 import unittest
 
+from CardSlot import CardPosition
 from GolfHand import GolfHand
 from Card import Card
 from CardSuit import CardSuit
@@ -14,41 +15,43 @@ class TestGolfHand(unittest.TestCase):
         # All slots exist and start face down
         for r in range(hand.rows):
             for c in range(hand.columns):
-                slot = hand.getSlot(r, c)
+                slot = hand.getSlot(CardPosition(r, c))
                 self.assertTrue(slot.isFaceDown)
                 self.assertIsNone(slot.card)
 
     def test_getSlot_bounds(self):
         hand = GolfHand()
         # Valid
-        self.assertIsNotNone(hand.getSlot(0, 0))
-        self.assertIsNotNone(hand.getSlot(1, 2))
+        self.assertIsNotNone(hand.getSlot(CardPosition(0, 0)))
+        self.assertIsNotNone(hand.getSlot(CardPosition(1, 2)))
         # Row out of bounds
         with self.assertRaises(IndexError):
-            hand.getSlot(-1, 0)
+            hand.getSlot(CardPosition(-1, 0))
         with self.assertRaises(IndexError):
-            hand.getSlot(2, 0)
+            hand.getSlot(CardPosition(2, 0))
         # Column out of bounds
         with self.assertRaises(IndexError):
-            hand.getSlot(0, -1)
+            hand.getSlot(CardPosition(0, -1))
         with self.assertRaises(IndexError):
-            hand.getSlot(0, 3)
+            hand.getSlot(CardPosition(0, 3))
 
     def test_place_and_reveal_hidden_card(self):
         hand = GolfHand()
         card = Card(CardSuit.Heart, CardType.Ace)
-        hand.placeHiddenCard(0, 1, card)
-        slot = hand.getSlot(0, 1)
+        pos = CardPosition(0, 1)
+        hand.placeFacedownCard(pos, card)
+        slot = hand.getSlot(pos)
         self.assertTrue(slot.isFaceDown)
         self.assertIs(slot.card, card)
-        hand.revealCard(0, 1)
+        hand.revealCard(pos)
         self.assertFalse(slot.isFaceDown)
 
     def test_place_revealed_card_sets_face_up(self):
         hand = GolfHand()
         card = Card(CardSuit.Spade, CardType.King)
-        hand.placeRevealedCard(1, 0, card)
-        slot = hand.getSlot(1, 0)
+        pos = CardPosition(1, 0)
+        hand.placeRevealedCard(pos, card)
+        slot = hand.getSlot(pos)
         self.assertFalse(slot.isFaceDown)
         self.assertIs(slot.card, card)
 
@@ -57,7 +60,7 @@ class TestGolfHand(unittest.TestCase):
         # Place hidden cards across the board
         for r in range(hand.rows):
             for c in range(hand.columns):
-                hand.placeHiddenCard(r, c, Card(CardSuit.Club, CardType.Three))
+                hand.placeFacedownCard(CardPosition(r, c), Card(CardSuit.Club, CardType.Three))
         self.assertFalse(hand.is_done())
         hand.revealRemainingCards()
         self.assertTrue(hand.is_done())
@@ -65,24 +68,24 @@ class TestGolfHand(unittest.TestCase):
     def test_calculate_value_pair_cancels_non_two(self):
         hand = GolfHand()
         # Column 0: pair of Fours revealed -> cancels to 0
-        hand.placeRevealedCard(0, 0, Card(CardSuit.Diamond, CardType.Four))
-        hand.placeRevealedCard(1, 0, Card(CardSuit.Heart, CardType.Four))
+        hand.placeRevealedCard(CardPosition(0, 0), Card(CardSuit.Diamond, CardType.Four))
+        hand.placeRevealedCard(CardPosition(1, 0), Card(CardSuit.Heart, CardType.Four))
         # Column 1: one revealed Seven -> counts 7
-        hand.placeRevealedCard(0, 1, Card(CardSuit.Spade, CardType.Seven))
+        hand.placeRevealedCard(CardPosition(0, 1), Card(CardSuit.Spade, CardType.Seven))
         # Column 2: both revealed Ace + King -> 1 + 0 = 1
-        hand.placeRevealedCard(0, 2, Card(CardSuit.Club, CardType.Ace))
-        hand.placeRevealedCard(1, 2, Card(CardSuit.Spade, CardType.King))
+        hand.placeRevealedCard(CardPosition(0, 2), Card(CardSuit.Club, CardType.Ace))
+        hand.placeRevealedCard(CardPosition(1, 2), Card(CardSuit.Spade, CardType.King))
         score = hand.calculate_current_hand_value()
         self.assertEqual(score, 0 + 7 + 1)
 
     def test_calculate_value_twos_do_not_cancel(self):
         hand = GolfHand()
         # Column 0: pair of Twos revealed -> sums -2 + -2 = -4
-        hand.placeRevealedCard(0, 0, Card(CardSuit.Club, CardType.Two))
-        hand.placeRevealedCard(1, 0, Card(CardSuit.Heart, CardType.Two))
+        hand.placeRevealedCard(CardPosition(0, 0), Card(CardSuit.Club, CardType.Two))
+        hand.placeRevealedCard(CardPosition(1, 0), Card(CardSuit.Heart, CardType.Two))
         # Column 1: only bottom revealed Nine -> counts 9
-        hand.placeHiddenCard(0, 1, Card(CardSuit.Spade, CardType.Five))
-        hand.placeRevealedCard(1, 1, Card(CardSuit.Diamond, CardType.Nine))
+        hand.placeFacedownCard(CardPosition(0, 1), Card(CardSuit.Spade, CardType.Five))
+        hand.placeRevealedCard(CardPosition(1, 1), Card(CardSuit.Diamond, CardType.Nine))
         # Column 2: both face down -> ignored
         score = hand.calculate_current_hand_value()
         self.assertEqual(score, -4 + 9)
@@ -93,16 +96,16 @@ class TestGolfHand(unittest.TestCase):
         a = Card(CardSuit.Heart, CardType.Ace)
         k = Card(CardSuit.Spade, CardType.King)
         t = Card(CardSuit.Club, CardType.Two)
-        hand.placeHiddenCard(0, 0, a)
-        hand.placeRevealedCard(0, 1, k)
-        hand.placeHiddenCard(1, 2, t)
+        hand.placeFacedownCard(CardPosition(0, 0), a)
+        hand.placeRevealedCard(CardPosition(0, 1), k)
+        hand.placeFacedownCard(CardPosition(1, 2), t)
         # Reveal one
-        hand.revealCard(0, 0)
+        hand.revealCard(CardPosition(0, 0))
         clone = hand.clone()
         for r in range(hand.rows):
             for c in range(hand.columns):
-                orig = hand.getSlot(r, c)
-                cp = clone.getSlot(r, c)
+                orig = hand.getSlot(CardPosition(r, c))
+                cp = clone.getSlot(CardPosition(r, c))
                 self.assertEqual(orig.isFaceDown, cp.isFaceDown)
                 self.assertIs(orig.card, cp.card)
 

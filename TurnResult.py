@@ -1,27 +1,28 @@
 from CardDeck import CardDeck
 from Card import Card
+from enum import Enum
 from GameState import GameState
 
+class TurnAction(Enum):
+    TookFromDiscardPile = 1
+    TookFromDrawPile = 2
+    DiscardedDrawnCard = 3
+
 class TurnResult:
-    def __init__(self, newState: GameState, tookDiscard: bool, takenCard: Card, tookDrawnCard: bool, playedAtRow: int, playedAtColumn: int, discard: Card):
+    def __init__(self, newState: GameState, action: TurnAction, takenCard: Card, playedAtRow: int, playedAtColumn: int, discard: Card):
         self.newState = newState
-        self.tookDiscard = tookDiscard
+        self.action = action
         self.takenCard = takenCard
-        self.tookDrawnCard = tookDrawnCard
         self.playedAtRow = playedAtRow
         self.playedAtColumn = playedAtColumn
         self.discard = discard
 
     def describe(self) -> str:
         description = ""
-        if self.tookDiscard:
-            description += f"Took the discard card: {self.takenCard.display()}\n"
+        if self.action == TurnAction.TookFromDiscardPile:
+            description = f"Took the {self.takenCard.str()} from the discard card pile and played it at ({self.playedAtRow+1}, {self.playedAtColumn+1}), replacing a {self.discard.str()}"
+        elif self.action == TurnAction.TookFromDrawPile:
+            description = f"Drew a {self.takenCard.str()} from the draw pile and played it at ({self.playedAtRow+1}, {self.playedAtColumn+1}), replacing a {self.discard.str()}"
         else:
-            description += f"Drew a new card: {self.takenCard.display()}\n"
-
-        if self.playedAtColumn != -1 and self.playedAtRow != -1:
-            description += f"Played the drawn card at position ({self.playedAtRow}, {self.playedAtColumn})\n"
-        else:
-            description += f"Discarded the drawn card: {self.takenCard.display()}\n"
-
+            description = f"Drew a {self.discard.str()} from the draw pile and discarded it."
         return description

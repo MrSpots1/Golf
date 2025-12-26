@@ -30,8 +30,8 @@ class GameMenu:
                     print("Invalid selection. Please try again.\n")
 
     def on_ai_start(self):
-        taylan = HumanPlayer("Taylan", 0)
-        ai = AIPlayer(1)
+        taylan = HumanPlayer("Taylan")
+        ai = AIPlayer()
         manager = GolfManager([taylan, ai])
         manager.run()
 
@@ -56,7 +56,7 @@ class GameMenu:
                     player_names.append(name.lower())
                     break
                 print("Name already in use. Please try again.")
-            players.append(HumanPlayer(name, i))
+            players.append(HumanPlayer(name))
 
         manager = GolfManager(players)
         manager.run()

@@ -1,3 +1,4 @@
+from CardSlot import CardSlot
 from GameState import GameState
 from GolfHand import GolfHand
 from PlayerType import PlayerType 
@@ -6,27 +7,26 @@ from Card import Card
 from TurnResult import TurnResult
 
 class Player:
-    def __init__(self, name: str, playerType: PlayerType, playerIndex: int):
+    def __init__(self, name: str, playerType: PlayerType):
         self.name = name
         self.playerType = playerType
-        self.playerIndex = playerIndex
         self.hand = GolfHand()
-
-    def display(self, isTurn: bool = False) -> None:
-        turnFlag = "-->>" if isTurn else ""
-        print(f"{turnFlag}Player: {self.name} [{self.playerType.name}]")
-        self.hand.display()
-
-    def displayFinal(self, isTurn: bool = False) -> None:
-        turnFlag = "-->>" if isTurn else ""
-        print(f"{turnFlag}Player: {self.name} [{self.playerType.name}]")
-        self.hand.display(True)
 
     def initialReveal(self) -> None:
         pass  # No implementation here — must be overridden for the player to reveal two cards
 
-    def playTurn(self, gameState: GameState) -> TurnResult:
-        pass  # No implementation here — must be overridden
-
-    def watchTurn(self, originalState: GameState, playerIndex: int, turnResult: TurnResult) -> None:
+    def considerDiscardCard(self, gameState: GameState, card: Card) -> CardSlot | None:
+        return False  # Default implementation does not consider the discard card
+    
+    def considerDrawCard(self, gameState: GameState, card: Card) -> CardSlot | None:
+        return False  # Default implementation does not consider the draw card
+    
+    def watchDiscard(self, gameState: GameState, slot: CardSlot | None, discardCard: Card | None, newDiscard: Card | None) -> None:
+        # slot, discardCard, and newDiscard are all None if the discard card was not taken
+        # all have vaues if it is taken
         return # No implementation for default implementation
+    
+    def watchDraw(self, gameState: GameState, slot: CardSlot | None, drawnCard: Card, newDiscard: Card) -> None:
+        # slot is None if the drawn card was discarded
+        return # No implementation for default implementation
+    

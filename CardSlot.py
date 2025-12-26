@@ -2,18 +2,25 @@ from CardSuit import CardSuit
 from CardType import CardType
 from Card import Card
 
-class CardSlot:
+class CardPosition:
     def __init__(
         self,
         row: int,
         column: int
     ):
-        self.card = None
-        self.isFaceDown = True
         self.row = row
         self.column = column
+
+class CardSlot:
+    def __init__(
+        self,
+        position: CardPosition
+    ):
+        self.card = None
+        self.isFaceDown = True
+        self.position = position
         
-    def placeHiddenCard(self, card: Card):
+    def placeFacedownCard(self, card: Card):
         if (self.card is not None):
             raise ValueError("CardSlot already has a card.")
         self.card = card
@@ -28,11 +35,11 @@ class CardSlot:
         self.card = card
         self.isFaceDown = False
 
-    def display(self) -> str:
+    def str(self) -> str:
         if self.isFaceDown:
             return "??"
         else:
-            return self.card.display()
+            return self.card.str()
         
     def get_card_value(self) -> int:
         score_map = {

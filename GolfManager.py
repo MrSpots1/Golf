@@ -1,14 +1,18 @@
+from CardSlot import CardPosition
 from CardSuit import CardSuit
 from CardType import CardType
 from Card import Card
 from GameState import GameState
+from Logger import ConsoleLogger, Logger
+from Player import Player
 from PlayerType import PlayerType
 from CardDeck import CardDeck
 
 class GolfManager:
-    def __init__(self, players: list):
+    def __init__(self, players: list, logger: Logger = ConsoleLogger()):
         self.deck = CardDeck(2)
         self.deck.shuffle()
+        self.__logger = logger
 
         self.players = players
         self.currentPlayerIndex = 0
@@ -19,7 +23,7 @@ class GolfManager:
             for r in range(player.hand.rows):
                 for c in range(player.hand.columns):
                     card = self.deck.draw_card()
-                    player.hand.placeHiddenCard(r, c, card)
+                    player.hand.placeFacedownCard(CardPosition(r, c), card)
         
         # provide a first discard card
         firstDiscard = self.deck.draw_card()
@@ -31,16 +35,18 @@ class GolfManager:
                 return True
         return False
 
-    def displayGameState(self, gameState: GameState):
-        print("Current Game State:")
+    def displayPlayer(self, player:Player, isTurn: bool, displayScore: bool = False):
+        turn_marker = "-> " if isTurn else ""
+        self.__logger.Info(f"\n{turn_marker}{player.name}:")
+        self.__logger.Info(player.hand.str())
+        if displayScore:
+            self.__logger.Info(f"Score: {player.hand.calculate_current_hand_value()}")
+        
+    def displayGameState(self, gameState: GameState, displayScores: bool = False):
+        self.__logger.Info("\nCurrent Game State:")
         for p in range(len(gameState.players)):
-            isTurn = (p == gameState.playerIndex)
-            gameState.players[p].display(isTurn)
-        print(f"Top discard card: {gameState.cardDeck.topDiscardCard().display()}")
-    def displayFinalGameState(self, gameState: GameState):
-        for p in range(len(gameState.players)):
-            gameState.players[p].displayFinal(False)
-            print("Hand Value:", gameState.players[p].hand.calculate_current_hand_value(), "\n")
+            self.displayPlayer(gameState.players[p], (p == gameState.playerIndex), displayScores)            
+        self.__logger.Info(f"\nTop discard card: {gameState.cardDeck.topDiscardCard().str()}\n")
 
     def run(self):
         self.deal()
@@ -53,42 +59,69 @@ class GolfManager:
             currentPlayer = self.players[self.currentPlayerIndex]
             gameState = GameState(self.deck, self.players, self.currentPlayerIndex)
             self.displayGameState(gameState)
-            print(f"It is {currentPlayer.name}'s turn.")
-            print("\n")
-            turnResult = currentPlayer.playTurn(gameState)
+            self.__logger.Info(f"It is {currentPlayer.name}'s turn.")
 
-            # display the move if it is AI
-            if currentPlayer.playerType != PlayerType.Human:
-                print(f"{currentPlayer.name} played their turn:")
-                print(turnResult.describe())
-                print("\n")
-
-            # allow the other players to watch/observe that move
+            takenCard = None
+            newDiscard = None
+            
+            # let current player consider the top discard card
+            played_slot = currentPlayer.considerDiscardCard(gameState, gameState.cardDeck.topDiscardCard())
+            if played_slot is not None:
+                takenCard = gameState.cardDeck.takeDiscardCard()
+                newDiscard = played_slot.card
+                currentPlayer.hand.placeRevealedCard(played_slot.position, takenCard)
+                self.__logger.Info(f"{currentPlayer.name} took the {takenCard.str()} and played it in position ({played_slot.position.row + 1}, {played_slot.position.column + 1}), discarding {newDiscard.str()}.")
+                self.deck.discard(newDiscard)
+            else:
+                self.__logger.Info(f"{currentPlayer.name} did not take the {gameState.cardDeck.topDiscardCard().str()}. Drawing...")
+                
+            # notify all players about the discard action
             for i, player in enumerate(self.players):
                 if i != self.currentPlayerIndex:
-                    player.watchTurn(gameState, self.currentPlayerIndex, turnResult)
+                    player.watchDiscard(gameState, played_slot, takenCard, newDiscard)
+
+            if played_slot is None:
+                # let current player consider drawing a new card
+                drawnCard = gameState.cardDeck.draw_card()
+                self.__logger.Info(f"{currentPlayer.name} drew a {drawnCard.str()}.")
+                played_slot = currentPlayer.considerDrawCard(gameState, drawnCard)
+
+                if played_slot is not None:
+                    newDiscard = played_slot.card
+                    currentPlayer.hand.placeRevealedCard(played_slot.position, drawnCard)
+                    self.__logger.Info(f"{currentPlayer.name} drew the {drawnCard.str()} and played it in position ({played_slot.position.row + 1}, {played_slot.position.column + 1}), discarding {newDiscard.str()}.")
+                    self.deck.discard(newDiscard)
+                else:
+                     self.deck.discard(drawnCard)
+                     self.__logger.Info(f"{currentPlayer.name} discarded the {drawnCard.str()}.")
+
+                # notify all players about the draw action
+                for i, player in enumerate(self.players):
+                    if i != self.currentPlayerIndex:
+                        player.watchDraw(gameState, played_slot, drawnCard, newDiscard)
+               
             if currentPlayer.hand.is_done() and out_player_index == -1:
                 out_player_index = self.currentPlayerIndex
+
             # move to next player
             self.currentPlayerIndex = (self.currentPlayerIndex + 1) % len(self.players)
-
         
-        print("The game is over!")
+        self.__logger.Info("The game is over!")
 
         winner = None
         winningScore = 100000
         for player in self.players:
             player.hand.revealRemainingCards()
 
+        self.__logger.Info("The final game state is as follows: ")
+        gameState = GameState(self.deck, self.players, self.currentPlayerIndex)
+        self.displayGameState(gameState, displayScores=True)
+
+        for player in self.players:
             score = player.hand.calculate_current_hand_value()
-            print(f"{player.name} scored {score} points.")
+            self.__logger.Info(f"{player.name} scored {score} points.")
             if score < winningScore:
                 winningScore = score
                 winner = player
-        print("The final game state is as follows: ")
-        gameState = GameState(self.deck, self.players, self.currentPlayerIndex)
-        self.displayFinalGameState(gameState)
-        print(f"The winner is {winner.name} with a score of {winningScore} points!")
+        self.__logger.Info(f"The winner is {winner.name} with a score of {winningScore} points!")
         
-
-
