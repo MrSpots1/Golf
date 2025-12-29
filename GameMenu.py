@@ -1,4 +1,5 @@
 from AIPlayer import AIPlayer
+from AggressiveAIPlayer import AggressiveAIPlayer
 from GolfManager import GolfManager
 from HumanPlayer import HumanPlayer
 from Tournament import Tournament
@@ -35,7 +36,7 @@ class GameMenu:
 
     def on_ai_start(self):
         taylan = HumanPlayer("Taylan")
-        ai = AIPlayer()
+        ai = AggressiveAIPlayer(maxToleratedScore=10, maxToleratedCard=7)
         manager = GolfManager([taylan, ai])
         manager.run()
 

@@ -29,6 +29,8 @@ class ConsoleLogger(Logger):
         print(f"[ERROR] {message}")
 
     def Result(self, players: list) -> None:
+        winningScore = 1000
+        winner = None
         for player in players:
             score = player.hand.calculate_current_hand_value()
             self.Info(f"{player.name} scored {score} points.")
