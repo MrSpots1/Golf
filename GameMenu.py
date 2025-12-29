@@ -1,6 +1,8 @@
 from AIPlayer import AIPlayer
+from AggressiveAIPlayer import AggressiveAIPlayer
 from GolfManager import GolfManager
 from HumanPlayer import HumanPlayer
+from Tournament import Tournament
 
 
 class GameMenu: 
@@ -8,20 +10,23 @@ class GameMenu:
         print("\n=== Golf: Main Menu ===")
         print("1) Start new game vs AI")
         print("2) Start new game vs Player")
-        print("3) Display rules")
+        print("3) Start new Tournament")
+        print("4) Show Rules")
         print("q) Quit")
 
     def run(self):
         running = True
         while running:
             self.display()
-            choice = input("Select an option (1-3 or q): ").strip().lower()
+            choice = input("Select an option (1-4 or q): ").strip().lower()
             match choice:
                 case "1":
                     self.on_ai_start()
                 case "2":
                     self.on_player_start()
                 case "3":
+                    self.on_tournament_start()
+                case "4":
                     self.on_show_rules()
                 case "q":
                     print("Goodbye!")
@@ -31,9 +36,13 @@ class GameMenu:
 
     def on_ai_start(self):
         taylan = HumanPlayer("Taylan")
-        ai = AIPlayer()
+        ai = AggressiveAIPlayer(maxToleratedScore=10, maxToleratedCard=7)
         manager = GolfManager([taylan, ai])
         manager.run()
+
+    def on_tournament_start(self):
+        tourney = Tournament()
+        tourney.run()
 
     def on_player_start(self):
         players = []
