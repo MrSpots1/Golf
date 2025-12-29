@@ -12,6 +12,9 @@ class Logger:
     def Error(self, message: str) -> None:
         pass
 
+    def Result(self, players: list) -> None:
+        pass
+
 class ConsoleLogger(Logger):
     def __init__(self):
         super().__init__()
@@ -24,3 +27,12 @@ class ConsoleLogger(Logger):
 
     def Error(self, message: str) -> None:
         print(f"[ERROR] {message}")
+
+    def Result(self, players: list) -> None:
+        for player in players:
+            score = player.hand.calculate_current_hand_value()
+            self.Info(f"{player.name} scored {score} points.")
+            if score < winningScore:
+                winningScore = score
+                winner = player
+        self.Info(f"The winner is {winner.name} with a score of {winningScore} points!")
