@@ -53,11 +53,11 @@ class HumanPlayer(Player):
                           ["1", "2", "3"])) - 1
         return CardPosition(pos_row, pos_col)
 
-    def watchDiscard(self, gameState: GameState, slot: CardSlot | None, discardCard: Card | None, newDiscard: Card | None) -> None:
+    def watchDiscard(self, gameState: GameState, slot: CardSlot | None, slotIsFacedown: bool, discardCard: Card | None, newDiscard: Card | None) -> None:
         # slot, discardCard, and newDiscard are all None if the discard card was not taken
         # all have vaues if it is taken
         return # No implementation for default implementation
     
-    def watchDraw(self, gameState: GameState, slot: CardSlot | None, drawnCard: Card, newDiscard: Card) -> None:
+    def watchDraw(self, gameState: GameState, slot: CardSlot | None, slotIsFacedown: bool, drawnCard: Card, newDiscard: Card) -> None:
         # slot is None if the drawn card was discarded
         return # No implementation for default implementation

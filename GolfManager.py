@@ -49,11 +49,18 @@ class GolfManager:
         self.__logger.Info(f"\nTop discard card: {gameState.cardDeck.topDiscardCard().str()}\n")
 
     def run(self):
+        for player in self.players:
+            player.initializeHand()
+
         self.deal()
         out_player_index = -1
-        # allow them to pick two cards to reveal initially
+        # allow all players to pick two cards to reveal initially
         for player in self.players:
             player.initialReveal()
+
+        # allow all players to observe the initial game state
+        for player in self.players:
+            player.observeGameState(GameState(self.deck, self.players, self.currentPlayerIndex))
 
         while not self.isGameOver() or self.isGameOver() and self.currentPlayerIndex != out_player_index:
             currentPlayer = self.players[self.currentPlayerIndex]
@@ -66,9 +73,11 @@ class GolfManager:
             
             # let current player consider the top discard card
             played_slot = currentPlayer.considerDiscardCard(gameState, gameState.cardDeck.topDiscardCard())
+            slotIsFacedown = False
             if played_slot is not None:
                 takenCard = gameState.cardDeck.takeDiscardCard()
                 newDiscard = played_slot.card
+                slotIsFacedown = played_slot.isFaceDown
                 currentPlayer.hand.placeRevealedCard(played_slot.position, takenCard)
                 self.__logger.Info(f"{currentPlayer.name} took the {takenCard.str()} and played it in position ({played_slot.position.row + 1}, {played_slot.position.column + 1}), discarding {newDiscard.str()}.")
                 self.deck.discard(newDiscard)
@@ -78,7 +87,7 @@ class GolfManager:
             # notify all players about the discard action
             for i, player in enumerate(self.players):
                 if i != self.currentPlayerIndex:
-                    player.watchDiscard(gameState, played_slot, takenCard, newDiscard)
+                    player.watchDiscard(gameState, played_slot, slotIsFacedown, takenCard, newDiscard)
 
             if played_slot is None:
                 # let current player consider drawing a new card
@@ -88,6 +97,7 @@ class GolfManager:
 
                 if played_slot is not None:
                     newDiscard = played_slot.card
+                    slotIsFacedown = played_slot.isFaceDown
                     currentPlayer.hand.placeRevealedCard(played_slot.position, drawnCard)
                     self.__logger.Info(f"{currentPlayer.name} drew the {drawnCard.str()} and played it in position ({played_slot.position.row + 1}, {played_slot.position.column + 1}), discarding {newDiscard.str()}.")
                     self.deck.discard(newDiscard)
@@ -98,7 +108,7 @@ class GolfManager:
                 # notify all players about the draw action
                 for i, player in enumerate(self.players):
                     if i != self.currentPlayerIndex:
-                        player.watchDraw(gameState, played_slot, drawnCard, newDiscard)
+                        player.watchDraw(gameState, played_slot, slotIsFacedown, drawnCard, newDiscard)
                
             if currentPlayer.hand.is_done() and out_player_index == -1:
                 out_player_index = self.currentPlayerIndex
@@ -117,11 +127,5 @@ class GolfManager:
         gameState = GameState(self.deck, self.players, self.currentPlayerIndex)
         self.displayGameState(gameState, displayScores=True)
 
-        for player in self.players:
-            score = player.hand.calculate_current_hand_value()
-            self.__logger.Info(f"{player.name} scored {score} points.")
-            if score < winningScore:
-                winningScore = score
-                winner = player
-        self.__logger.Info(f"The winner is {winner.name} with a score of {winningScore} points!")
+        self.__logger.Result(self.players)
         
